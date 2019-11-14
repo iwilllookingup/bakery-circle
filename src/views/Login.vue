@@ -17,23 +17,49 @@
     </v-col>
 
     <v-col cols="6" sm="1" class="mx-auto">
-      <v-btn :disabled="!valid" color="success" class="mr-4" @click="validate">Login</v-btn>
+      <v-btn :disabled="!valid" color="success" class="mr-4" @click="login">Login</v-btn>
     </v-col>
   </v-form>
 </template>
 
 <script>
+/* eslint-disable no-console */
+/* eslint-disable no-alert */
+import axios from "axios";
+import routes from "@/router/index.js";
 export default {
-  data: () => ({
-    valid: true,
-    username: "",
-    password: ""
-  }),
-
+  name: "Login",
+  data() {
+    return {
+      username: "",
+      password: ""
+    };
+  },
+  mounted() {
+    if (this.$cookie.get("authenticated")) {
+      routes.push({ name: "transaction" });
+    }
+  },
   methods: {
-    validate() {
-      if (this.$refs.form.validate()) {
-        this.snackbar = true;
+    login() {
+      if (this.username !== "" && this.password !== "") {
+        axios
+          .post("http://localhost:8081/v1/login", {
+            username: this.username,
+            password: this.password
+          })
+          .then(response => {
+            this.$cookie.set("authenticated", true);
+            this.$cookie.set("display_name", response.data.display_name);
+            this.$cookie.set("username", response.data.username);
+            this.$cookie.set("password", response.data.password);
+            routes.push({ name: "transaction" });
+          })
+          .catch(function(error) {
+            console.log(error);
+          });
+      } else {
+        console.log("A username and password must be present");
       }
     }
   }

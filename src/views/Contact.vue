@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="landing-page">
     <Navbar />
     <v-row>
       <v-card max-width="344" class="ma-3 pa-6" outlined tile>
@@ -42,10 +42,28 @@
 
 <script>
 import Navbar from "@/components/Navbar";
+import routes from "@/router/index.js";
 export default {
+  mounted() {
+    if (!(this.$cookie.get("table_selected") > 0)) {
+      routes.push({ name: "register" });
+    }
+  },
   components: { Navbar },
   data() {
     return {};
   }
 };
 </script>
+
+<style>
+#landing-page {
+  background-image: url("../assets/bg.jpg");
+  /* background-color: #8f2c2c; */
+  height: 100vh;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  position: relative;
+}
+</style>

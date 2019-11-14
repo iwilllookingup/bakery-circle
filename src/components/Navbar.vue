@@ -1,6 +1,6 @@
 <template>
   <v-card color="grey lighten-4" flat tile>
-    <v-toolbar dense>
+    <v-toolbar color="grey" dense>
       <v-toolbar-title class="font-weight-light">Bakery</v-toolbar-title>
       <v-toolbar-title>Circle</v-toolbar-title>
        <v-toolbar-items class="mx-auto">

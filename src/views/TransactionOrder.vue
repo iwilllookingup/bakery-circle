@@ -17,6 +17,7 @@
 /* eslint-disable no-alert */
 import AdminNavbar from "@/components/AdminNavbar";
 import axios from "axios";
+import routes from "@/router/index.js";
 export default {
   name: "transaction_order",
   components: { AdminNavbar },
@@ -38,6 +39,13 @@ export default {
       ],
       orders: []
     };
+  },
+  mounted() {
+    if (!this.$cookie.get("authenticated")) {
+      routes.push({ name: "login" });
+    } else {
+      this.initialize();
+    }
   },
   created() {
     this.transactionID = this.$route.params.transaction_id;

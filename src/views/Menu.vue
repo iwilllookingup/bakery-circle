@@ -1,10 +1,16 @@
 <template>
-  <div>
+  <div id="landing-page" v-if="menus.length > 0">
+    <!-- <v-alert
+      :value="alert"
+      :dismissible="alert"
+      color="success"
+      outline
+    >{{ successOperation }}</v-alert>-->
     <AdminNavbar />
     <v-data-table :headers="headers" :items="menus" class="elevation-1">
       <template v-slot:top>
         <v-toolbar flat color="white">
-          <v-toolbar-title>Menus</v-toolbar-title>
+          <v-toolbar-title>Menus Menager</v-toolbar-title>
           <v-divider class="mx-4" inset vertical></v-divider>
           <v-spacer></v-spacer>
           <v-dialog v-model="dialog" max-width="500px">
@@ -58,6 +64,7 @@
 import AdminNavbar from "@/components/AdminNavbar";
 import { mdiPencil, mdiDelete } from "@mdi/js";
 import axios from "axios";
+import routes from "@/router/index.js";
 export default {
   components: { AdminNavbar },
   data: () => ({
@@ -81,6 +88,8 @@ export default {
     ],
     menus: [],
     editedIndex: -1,
+    alert: false,
+    successOperation: "",
     editedItem: {
       menu_id: 0,
       menu_name: "",
@@ -91,11 +100,18 @@ export default {
     }
   }),
   mounted() {
-    this.initialize();
+    if (!this.$cookie.get("authenticated")) {
+      routes.push({ name: "login" });
+    } else {
+      this.initialize();
+    }
   },
-  created() {},
-
   methods: {
+    showAlert(msg) {
+      this.successOperation = msg;
+
+      this.alert = true;
+    },
     initialize() {
       axios
         .get("http://localhost:8081/v1/menus")
@@ -163,6 +179,7 @@ export default {
           .then(() => {
             this.initialize();
             this.dialog = false;
+            this.showAlert("Update menu success");
           })
           .catch(function(error) {
             console.log(error);
@@ -179,6 +196,7 @@ export default {
           .then(() => {
             this.initialize();
             this.dialog = false;
+            this.showAlert("Create menu success");
           })
           .catch(function(error) {
             console.log(error);
@@ -189,3 +207,15 @@ export default {
   }
 };
 </script>
+
+<style>
+#landing-page {
+  background-image: url("../assets/bg.jpg");
+  /* background-color: #8f2c2c; */
+  height: 100vh;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  position: relative;
+}
+</style>

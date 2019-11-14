@@ -1,13 +1,13 @@
 <template>
-  <div>
-    <v-toolbar class="mx-auto">
+  <div id="landing-page">
+    <v-toolbar  class="mx-auto">
       <v-toolbar-items class="mx-auto">
-        <v-btn text @click="getBakeryList">Bakery</v-btn>
-        <v-btn text @click="getCoffeeList">Coffee</v-btn>
+        <v-btn color="indigo" text @click="getBakeryList">Bakery</v-btn>
+        <v-btn color="orange" text @click="getCoffeeList">Drink</v-btn>
       </v-toolbar-items>
     </v-toolbar>
 
-    <v-sheet class="mx-auto" elevation="8">
+    <v-sheet class="mx-auto" elevation="8" color="grey">
       <v-slide-group
         v-model="model"
         class="pa-4"
@@ -86,7 +86,11 @@
     <v-row justify="center">
       <v-dialog v-model="DialogOn" persistent max-width="500">
         <v-card>
-          <v-card-title class="headline">Please waiting until table available</v-card-title>
+          <v-card-title class="headline">
+            Please waiting until table available
+            <v-spacer></v-spacer>
+            <v-progress-circular indeterminate color="primary"></v-progress-circular>
+          </v-card-title>
           <!-- <v-card-text>Please waiting until table available</v-card-text> -->
           <v-card-actions>
             <v-spacer></v-spacer>
@@ -105,7 +109,7 @@ export default {
     DialogOn: false,
     model: null,
     menus: [],
-    tableID: 1, //TODO
+    tableID: 0, //TODO
     transactionID: 0, // TODO
     orderItems: [],
     dialog: false,
@@ -122,6 +126,9 @@ export default {
     ]
   }),
   mounted() {
+    if (this.$cookie.get("table_selected") > 0) {
+      this.tableID = this.$cookie.get("table_selected");
+    }
     this.getBakeryList();
     this.initialTransactionID();
   },
@@ -170,7 +177,19 @@ export default {
       axios.put(
         "http://localhost:8081/v1/transaction/".concat(this.transactionID)
       );
+
+      axios
+        .put("http://localhost:8081/v1/table/".concat(this.tableID), {
+          status: "charging"
+        })
+        .then(() => {})
+        .catch(error => {
+          console.log(error);
+        });
+
       this.transactionID = 0;
+
+      // this.initialTransactionID();
     },
     getBakeryList() {
       axios.get("http://localhost:8081/v1/menus/bakery").then(response => {
@@ -212,3 +231,15 @@ export default {
   }
 };
 </script>
+
+<style>
+#landing-page {
+  background-image: url("../assets/bg.jpg");
+  /* background-color: #8f2c2c; */
+  height: 100vh;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  position: relative;
+}
+</style>

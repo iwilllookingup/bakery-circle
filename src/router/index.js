@@ -39,6 +39,16 @@ const routes = [
     path: "/transaction_order",
     name: "transaction_order",
     component: () => import("../views/TransactionOrder.vue")
+  },
+  {
+    path: "/table",
+    name: "table",
+    component: () => import("../views/Table.vue")
+  },
+  {
+    path: "/",
+    name: "register",
+    component: () => import("../views/TableRegister.vue")
   }
 ];
 
