@@ -1,6 +1,6 @@
 <template>
   <div id="landing-page">
-    <v-toolbar  class="mx-auto">
+    <v-toolbar class="mx-auto">
       <v-toolbar-items class="mx-auto">
         <v-btn color="indigo" text @click="getBakeryList">Bakery</v-btn>
         <v-btn color="orange" text @click="getCoffeeList">Drink</v-btn>
@@ -44,15 +44,17 @@
         <v-card-text>
           <v-container>
             <v-row>
-              <v-col cols="12" sm="6" md="4">
+              <v-col cols="12" sm="12" md="6">
                 <v-text-field v-model="editedItem.menu_name" label="Name" disabled></v-text-field>
               </v-col>
-              <v-col cols="12" sm="6" md="4">
-                <v-text-field v-model="editedItem.price" label="Price" disabled></v-text-field>
-              </v-col>
-              <v-col cols="12" sm="6" md="4">
-                <v-text-field v-model="editedItem.quantity" label="Qantity"></v-text-field>
-              </v-col>
+              <v-row>
+                <v-col cols="12" sm="6" md="4">
+                  <v-text-field v-model="editedItem.price" label="Price" disabled></v-text-field>
+                </v-col>
+                <v-col cols="12" sm="6" md="4">
+                  <v-text-field v-model="editedItem.quantity" label="Qantity"></v-text-field>
+                </v-col>
+              </v-row>
             </v-row>
           </v-container>
         </v-card-text>
@@ -80,7 +82,7 @@
       color="indigo"
       dark
       right="true"
-      @click="checkBill"
+      @click="summaryPrice"
     >Check Bill</v-btn>
 
     <v-row justify="center">
@@ -91,9 +93,22 @@
             <v-spacer></v-spacer>
             <v-progress-circular indeterminate color="primary"></v-progress-circular>
           </v-card-title>
-          <!-- <v-card-text>Please waiting until table available</v-card-text> -->
           <v-card-actions>
             <v-spacer></v-spacer>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+    </v-row>
+
+    <v-row justify="center">
+      <v-dialog v-model="confirmDialog" persistent max-width="350">
+        <v-card>
+          <v-card-title class="headline">Summary Order Price</v-card-title>
+          <v-card-text>Total Price = {{totalPrice}}</v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="green darken-1" text @click="cancelSummary">Cancel</v-btn>
+            <v-btn color="green darken-1" text @click="checkBill">Confirm</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
@@ -107,10 +122,11 @@ import axios from "axios";
 export default {
   data: () => ({
     DialogOn: false,
+    confirmDialog: false,
     model: null,
     menus: [],
-    tableID: 0, //TODO
-    transactionID: 0, // TODO
+    tableID: 0,
+    transactionID: 0,
     orderItems: [],
     dialog: false,
     editedItem: {
@@ -119,6 +135,7 @@ export default {
       price: 0,
       quantity: 0
     },
+    totalPrice: 0,
     headers: [
       { text: "Name", value: "menu_name" },
       { text: "Price per piece", value: "menu_price" },
@@ -131,6 +148,10 @@ export default {
     }
     this.getBakeryList();
     this.initialTransactionID();
+
+    setInterval(() => {
+      this.initialTransactionID();
+    }, 5000);
   },
   watch: {
     transactionID(val) {
@@ -142,6 +163,10 @@ export default {
     }
   },
   methods: {
+    cancelSummary() {
+      this.totalPrice = 0;
+      this.confirmDialog = false;
+    },
     initialTransactionID() {
       axios
         .get("http://localhost:8081/v1/transaction/".concat(this.tableID))
@@ -173,7 +198,15 @@ export default {
     close() {
       this.dialog = false;
     },
+    summaryPrice() {
+      this.orderItems.forEach(val => {
+        this.totalPrice = this.totalPrice + val.menu_price * val.quantity;
+      });
+      this.confirmDialog = true;
+    },
     checkBill() {
+      this.orderItems = [];
+      this.confirmDialog = false;
       axios.put(
         "http://localhost:8081/v1/transaction/".concat(this.transactionID)
       );
@@ -188,7 +221,6 @@ export default {
         });
 
       this.transactionID = 0;
-
       // this.initialTransactionID();
     },
     getBakeryList() {
@@ -202,29 +234,31 @@ export default {
       });
     },
     order() {
-      if (this.transactionID == 0) {
+      if (this.editedItem.quantity > 0) {
+        if (this.transactionID == 0) {
+          axios
+            .get("http://localhost:8081/v1/transaction/".concat(this.tableID))
+            .then(response => {
+              this.transactionID = response.data.transaction_id;
+            });
+        }
+
         axios
-          .get("http://localhost:8081/v1/transaction/".concat(this.tableID))
-          .then(response => {
-            this.transactionID = response.data.transaction_id;
+          .post("http://localhost:8081/v1/order", {
+            menu_id: this.editedItem.menu_id,
+            transaction_id: this.transactionID,
+            quantity: this.editedItem.quantity,
+            menu_price: this.editedItem.price,
+            menu_name: this.editedItem.menu_name
+          })
+          .then(() => {
+            axios
+              .get("http://localhost:8081/v1/order/".concat(this.transactionID))
+              .then(response => {
+                this.orderItems = response.data;
+              });
           });
       }
-
-      axios
-        .post("http://localhost:8081/v1/order", {
-          menu_id: this.editedItem.menu_id,
-          transaction_id: this.transactionID,
-          quantity: this.editedItem.quantity,
-          menu_price: this.editedItem.price,
-          menu_name: this.editedItem.menu_name
-        })
-        .then(() => {
-          axios
-            .get("http://localhost:8081/v1/order/".concat(this.transactionID))
-            .then(response => {
-              this.orderItems = response.data;
-            });
-        });
 
       this.close();
     }

@@ -1,25 +1,27 @@
 <template>
-  <v-form ref="form" v-model="valid" lazy-validation>
-    <v-img
-      src="@/assets/login.svg"
-      aspect-ratio="1"
-      max-width="200"
-      max-height="200"
-      class="mx-auto"
-    ></v-img>
+  <div id="landing-page">
+    <v-form ref="form" v-model="valid" lazy-validation>
+      <v-img
+        src="@/assets/login.svg"
+        aspect-ratio="1"
+        max-width="200"
+        max-height="200"
+        class="mx-auto"
+      ></v-img>
 
-    <v-col cols="6" sm="3" class="mx-auto">
-      <v-text-field v-model="username" label="Username" required></v-text-field>
-    </v-col>
+      <v-col cols="6" sm="3" class="mx-auto">
+        <v-text-field v-model="username" label="Username" required></v-text-field>
+      </v-col>
 
-    <v-col cols="6" sm="3" class="mx-auto">
-      <v-text-field v-model="password" :type="'password'" label="Password" required></v-text-field>
-    </v-col>
+      <v-col cols="6" sm="3" class="mx-auto">
+        <v-text-field v-model="password" :type="'password'" label="Password" required></v-text-field>
+      </v-col>
 
-    <v-col cols="6" sm="1" class="mx-auto">
-      <v-btn :disabled="!valid" color="success" class="mr-4" @click="login">Login</v-btn>
-    </v-col>
-  </v-form>
+      <v-col cols="6" sm="1" class="mx-auto">
+        <v-btn :disabled="!valid" color="success" class="mr-4" @click="login">Login</v-btn>
+      </v-col>
+    </v-form>
+  </div>
 </template>
 
 <script>
@@ -65,3 +67,15 @@ export default {
   }
 };
 </script>
+
+<style>
+#landing-page {
+  background-image: url("../assets/bg-space-center.jpg");
+  /* background-color: #8f2c2c; */
+  height: 100vh;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  position: relative;
+}
+</style>

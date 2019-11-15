@@ -36,6 +36,8 @@ export default {
     this.getTableIDList();
     if (this.$cookie.get("table_selected") > 0) {
       routes.push({ name: "order" });
+      // window.location.assign("localhost:8080/order")
+      // window.location.href = "localhost:8080/order"
     }
   },
   data: () => ({

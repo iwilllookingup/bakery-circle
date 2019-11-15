@@ -1,5 +1,5 @@
 <template>
-  <div id="landing-page" v-if="menus.length > 0">
+  <div v-if="menus.length > 0">
     <!-- <v-alert
       :value="alert"
       :dismissible="alert"
@@ -155,11 +155,13 @@ export default {
           });
     },
     close() {
+      this.initialize()
       this.dialog = false;
       setTimeout(() => {
         this.editedItem = Object.assign({}, this.defaultItem);
         this.editedIndex = -1;
       }, 300);
+      // this.dialog = false;
     },
     save() {
       if (this.editedIndex > -1) {
@@ -207,15 +209,3 @@ export default {
   }
 };
 </script>
-
-<style>
-#landing-page {
-  background-image: url("../assets/bg.jpg");
-  /* background-color: #8f2c2c; */
-  height: 100vh;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
-  position: relative;
-}
-</style>

@@ -31,10 +31,10 @@ export default {
           align: "left",
           value: "order_id"
         },
+        { text: "Transaction ID", value: "transaction_id" },
         { text: "Menu ID", value: "menu_id" },
         { text: "Menu Name", value: "menu_name" },
         { text: "Menu Price", value: "menu_price" },
-        { text: "Transaction ID", value: "transaction_id" },
         { text: "Quantity", value: "quantity" }
       ],
       orders: []
