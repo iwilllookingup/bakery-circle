@@ -1,9 +1,15 @@
 <template>
   <div id="landing-page">
-    <v-toolbar class="mx-auto">
+    <v-toolbar class="mx-auto" src="../assets/bg.jpg">
       <v-toolbar-items class="mx-auto">
-        <v-btn color="indigo" text @click="getBakeryList">Bakery</v-btn>
-        <v-btn color="orange" text @click="getCoffeeList">Drink</v-btn>
+        <v-btn color="indigo" text @click="getBakeryList">
+          Bakery
+          <v-icon>mdi-baguette</v-icon>
+        </v-btn>
+        <v-btn color="orange" text @click="getCoffeeList">
+          Drink
+          <v-icon>mdi-coffee</v-icon>
+        </v-btn>
       </v-toolbar-items>
     </v-toolbar>
 
@@ -44,7 +50,7 @@
         <v-card-text>
           <v-container>
             <v-row>
-              <v-col cols="12" sm="12" md="6">
+              <v-col cols="12" sm="12" md="8">
                 <v-text-field v-model="editedItem.menu_name" label="Name" disabled></v-text-field>
               </v-col>
               <v-row>
@@ -83,7 +89,10 @@
       dark
       right="true"
       @click="summaryPrice"
-    >Check Bill</v-btn>
+    >
+      Check Bill
+      <v-icon>mdi-briefcase-check</v-icon>
+    </v-btn>
 
     <v-row justify="center">
       <v-dialog v-model="DialogOn" persistent max-width="500">
@@ -104,7 +113,13 @@
       <v-dialog v-model="confirmDialog" persistent max-width="350">
         <v-card>
           <v-card-title class="headline">Summary Order Price</v-card-title>
-          <v-card-text>Total Price = {{totalPrice}}</v-card-text>
+          <v-card-text
+            v-for="n in orderItems"
+            :key="n.menu_id"
+          > {{n.quantity}} {{n.menu_name}} = {{n.menu_price * n.quantity}} baht</v-card-text>
+          <div>
+          <v-card-text>Total Price = {{totalPrice}} baht</v-card-text>
+          </div>
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn color="green darken-1" text @click="cancelSummary">Cancel</v-btn>

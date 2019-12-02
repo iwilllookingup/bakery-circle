@@ -44,18 +44,20 @@ export default {
   },
   methods: {
     login() {
-      if (this.username !== "" && this.password !== "") {
+      if (this.username !== "" || this.password !== "") {
         axios
           .post("http://localhost:8081/v1/login", {
             username: this.username,
             password: this.password
           })
           .then(response => {
+            if (response.data.username !== undefined) {
             this.$cookie.set("authenticated", true);
             this.$cookie.set("display_name", response.data.display_name);
             this.$cookie.set("username", response.data.username);
             this.$cookie.set("password", response.data.password);
             routes.push({ name: "transaction" });
+            }
           })
           .catch(function(error) {
             console.log(error);

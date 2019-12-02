@@ -84,6 +84,11 @@ export default {
     } else {
       this.initialize();
     }
+
+    setInterval(() => {
+      this.initialize();
+    }, 2500);
+
   },
   methods: {
     updateStatus() {

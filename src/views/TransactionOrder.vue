@@ -6,6 +6,7 @@
       <v-card-title>
         Transaction's orders
         <v-spacer></v-spacer>
+        <v-btn text to="/transaction"><v-icon>mdi-arrow-left-bold</v-icon> view transactions</v-btn>
       </v-card-title>
       <v-data-table :headers="headers" :items="orders" :search="search"></v-data-table>
     </v-card>
